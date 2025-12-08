@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -36,7 +36,7 @@ jobs:
         run: tar -czvf sausage-store-${APP_VERSION}.${GITHUB_SHA:0:7}.tar.gz -C dist/frontend .
 
       - name: Upload Frontend Archive
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-archive
           path: frontend/sausage-store-*.tar.gz
