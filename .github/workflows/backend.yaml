@@ -1,4 +1,4 @@
-name: Backend Build
+name: Backend Build and Test
 
 on:
   push:
@@ -23,10 +23,14 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '16'
-
+        
       - name: Build with Maven
         working-directory: backend
-        run: mvn package -Dversion.application=${APP_VERSION}.${GITHUB_SHA:0:7} -DskipTests=true
+        run: mvn package -DskipTests=true -Dversion.application=${APP_VERSION}.${GITHUB_SHA:0:7}
+        
+      - name: Run Integration Tests
+        working-directory: backend
+        run: mvn test
 
       - name: Run Checkstyle
         working-directory: backend
@@ -34,7 +38,7 @@ jobs:
 
       - name: Run SpotBugs
         working-directory: backend
-        run: mvn spotbugs:spotbugs
+        run: mvn spotbugs:check
         continue-on-error: true
 
       - name: Upload JAR Artifact
@@ -42,6 +46,12 @@ jobs:
         with:
           name: jar-artifact
           path: backend/target/*.jar
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: backend/target/surefire-reports/
 
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v3
