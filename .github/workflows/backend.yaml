@@ -28,13 +28,16 @@ jobs:
         working-directory: backend
         run: mvn package -DskipTests=true -Dversion.application=${APP_VERSION}.${GITHUB_SHA:0:7}
         
+      - name: Rename JAR with unique version
+        working-directory: backend/target
+        run: |
+          mv sausage-store-0.0.1-SNAPSHOT.jar sausage-store-${APP_VERSION}.${GITHUB_SHA:0:7}.jar
 
       - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: jar-artifact
-          path: backend/target/sausage-store-${{ env.APP_VERSION }}.${GITHUB_SHA::7}.jar
-
+          path: backend/target/sausage-store-${APP_VERSION}.${GITHUB_SHA:0:7}.jar
 
 
 
