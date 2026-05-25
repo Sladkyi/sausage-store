@@ -61,7 +61,7 @@ jobs:
           CHART_FILE=$(ls sausage-store-*.tgz)
           curl -u ${{ secrets.NEXUS_HELM_REPO_USER }}:${{ secrets.NEXUS_HELM_REPO_PASSWORD }} \
             --upload-file $CHART_FILE \
-            ${{ secrets.NEXUS_HELM_REPO }}
+            ${{ secrets.NEXUS_HELM_REPO }}/$CHART_FILE
 
   deploy_helm_chart_to_kubernetes:
     name: Deploy Helm Chart To Kubernetes
