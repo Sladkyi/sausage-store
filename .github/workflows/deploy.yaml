@@ -84,4 +84,5 @@ jobs:
         run: |
           helm upgrade --install sausage-store nexus/sausage-store \
             --namespace $SAUSAGE_STORE_NAMESPACE \
+            --version 0.2.0 \
             --timeout 5m
