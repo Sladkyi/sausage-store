@@ -60,6 +60,13 @@ backend:
     initialDelaySeconds: 30
     periodSeconds: 10
     failureThreshold: 3
+  vpa:
+    updatePolicy:
+      updateMode: "Off"
+    resourcePolicy:
+      containerPolicies:
+      - containerName: backend
+        controlledResources: ["cpu", "memory"]
 
 backend-report:
   replicas: 1
