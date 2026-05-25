@@ -1,13 +1,7 @@
 global:
   imagePullPolicy: Always
-  ###vault:
-  ###  host: ip
-  ###  name: vault
-  ###  vaultToken: someToken
-
 
 frontend:
-### В чарте frontend отсутствуют некоторые важные файлы. Поймите какие и опишите их.
   replicas: 1
   revisionHistoryLimit: 15
   strategy:
@@ -15,11 +9,11 @@ frontend:
   service:
     port: 80
   ingress:
-    host: YOUR_STUDENT_HOSTNAME.students-projects.ru # Корректный домен будет указан в задании
+    host: front-sladkyi.2sem.students-projects.ru
     path: /
     pathType: Prefix
   containerPort: 80
-  image: YOUR_DOCKERHUB/sausage-frontend:latest
+  image: fetbubun/sausage-frontend:latest
   resources:
     requests:
       memory: "128Mi"
@@ -45,8 +39,11 @@ backend:
   revisionHistoryLimit: 15
   replicas: 1
   strategy:
-  ### Опишите стратегию RollingUpdate для бэкенда
-  image: YOUR_DOCKERHUB/sausage-backend:latest
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  image: fetbubun/sausage-backend:latest
   imagePullPolicy: Always
   resources:
     requests:
@@ -57,20 +54,29 @@ backend:
       cpu: "1"
   containerPort: 8080
   livenessProbe:
-  ### Опишите LivenessProbe для бэкенда
-  vpa:
-  ### Опишите VPA для бэкенда
+    httpGet:
+      path: /actuator/health
+      port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
 
 backend-report:
-### Опишите значения для backend-report
-### Приложение должно использовать стратегию Recreate
-### Приложение использует переменную PORT - порт, на котором оно запустится и DB - Uri-подключение к mongodb. 
-### DB положите в Secret, PORT в ConfigMap
-### Опишите HPA для backend-report
+  replicas: 1
+  image: fetbubun/sausage-backend-report:latest
+  containerPort: 8080
+  env:
+    DB: mongodb://root:rootpassword@mongodb:27017/reports?authSource=admin
+  hpa:
+    minReplicas: 1
+    maxReplicas: 3
+    cpuUtilization: 75
 
 infra:
   postgresql:
-  ### Опишите необходимые переменные для развертывания PostgresQL в кластере Kubernetes
+    database: sausage-store
+    username: store
+    password: storepassword
   mongodb:
     env:
       MONGO_INITDB_ROOT_USERNAME: root
