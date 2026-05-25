@@ -86,3 +86,7 @@ jobs:
             --namespace $SAUSAGE_STORE_NAMESPACE \
             --version 0.2.0 \
             --timeout 5m
+      - name: Restart deployments
+        run: |
+          kubectl rollout restart deployment -n $SAUSAGE_STORE_NAMESPACE
+          kubectl rollout restart statefulset -n $SAUSAGE_STORE_NAMESPACE
