@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-report-conf
+  namespace: {{ .Release.Namespace }}
+data:
+  PORT: "{{ .Values.containerPort }}"

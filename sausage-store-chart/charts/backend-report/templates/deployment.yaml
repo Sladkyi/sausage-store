@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-report
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: backend-report
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: backend-report
+  template:
+    metadata:
+      labels:
+        app: backend-report
+    spec:
+      containers:
+      - name: backend-report
+        image: {{ .Values.image }}
+        imagePullPolicy: Always
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: backend-report-conf
+              key: PORT
+        - name: DB
+          valueFrom:
+            secretKeyRef:
+              name: backend-report-secret
+              key: DB
+        ports:
+        - containerPort: {{ .Values.containerPort }}
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
