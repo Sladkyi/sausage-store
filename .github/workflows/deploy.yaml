@@ -74,7 +74,10 @@ jobs:
       - name: Set up kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+          printf '%s' "$KUBE_CONFIG" > ~/.kube/config
+          chmod 600 ~/.kube/config
+      - name: Verify cluster access
+        run: kubectl get ns "$SAUSAGE_STORE_NAMESPACE"
       - name: Add Nexus Helm repo
         run: |
           helm repo add nexus ${{ secrets.NEXUS_HELM_REPO }} \
