@@ -92,7 +92,7 @@ jobs:
         run: |
           helm upgrade --install sausage-store nexus/sausage-store \
             --namespace $SAUSAGE_STORE_NAMESPACE \
-            --version 0.3.1 \
+            --version 0.3.2 \
             --history-max 3 \
             --timeout 5m
       - name: Restart deployments
