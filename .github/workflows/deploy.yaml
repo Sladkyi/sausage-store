@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   NEXUS_HELM_REPO: ${{ secrets.NEXUS_HELM_REPO }}
@@ -81,6 +82,7 @@ jobs:
             --password ${{ secrets.NEXUS_HELM_REPO_PASSWORD }}
           helm repo update
       - name: Clean up old Helm release secrets
+        continue-on-error: true
         run: |
           kubectl delete secrets -n $SAUSAGE_STORE_NAMESPACE \
             -l owner=helm,status=superseded --ignore-not-found
