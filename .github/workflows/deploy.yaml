@@ -80,11 +80,18 @@ jobs:
             --username ${{ secrets.NEXUS_HELM_REPO_USER }} \
             --password ${{ secrets.NEXUS_HELM_REPO_PASSWORD }}
           helm repo update
+      - name: Clean up old Helm release secrets
+        run: |
+          kubectl delete secrets -n $SAUSAGE_STORE_NAMESPACE \
+            -l owner=helm,status=superseded --ignore-not-found
+          kubectl delete secrets -n $SAUSAGE_STORE_NAMESPACE \
+            -l owner=helm,status=failed --ignore-not-found
       - name: Deploy to Kubernetes
         run: |
           helm upgrade --install sausage-store nexus/sausage-store \
             --namespace $SAUSAGE_STORE_NAMESPACE \
-            --version 0.3.0 \
+            --version 0.3.1 \
+            --history-max 3 \
             --timeout 5m
       - name: Restart deployments
         run: |
